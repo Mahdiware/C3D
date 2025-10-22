@@ -5,6 +5,8 @@
 #include "renderer.h"
 #include "engine/core/shader/shader.h"
 #include <stdlib.h>
+#include <math.h>
+
 #include "engine/object/object.h"
 
 static void error_callback(int error, const char* description) {
@@ -105,6 +107,7 @@ Renderer *init_renderer(int height, int width, char *title) {
     return  r;
 }
 
+
 void renderer_polling(Renderer *r) {
     while (!glfwWindowShouldClose(r->window)) {
         glfwPollEvents();
@@ -120,7 +123,8 @@ void renderer_polling(Renderer *r) {
         glBindBuffer(GL_ARRAY_BUFFER, r->VAO);
 
         for (int i = 0; i < r->currentScene->totalObjects; i++) {
-            Object *obj = &r->currentScene->objects[i];
+            Object *obj = r->currentScene->objects[i];
+            obj->update(obj, r->currentTime);
             glBufferSubData(GL_ARRAY_BUFFER, 0, obj->total_vertices * sizeof(Vertex), obj->vertices);
             glDrawArrays(obj->mode, 0, obj->total_vertices);
         }

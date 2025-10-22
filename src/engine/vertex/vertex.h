@@ -4,11 +4,13 @@
 
 #ifndef C_3D_RENDERING_ENGINE_VERTEX_H
 #define C_3D_RENDERING_ENGINE_VERTEX_H
+#include "engine/vec3/vec3.h"
+
 typedef struct {
-    float x, y, z;
-    float r, g, b;
+    vec3 position;
+    vec3 color;
 }Vertex;
 
-Vertex *initialize_vertex(float x, float y, float z, float r, float g, float b);
+Vertex *initialize_vertex(vec3 position, vec3 color);
 
 #endif //C_3D_RENDERING_ENGINE_VERTEX_H

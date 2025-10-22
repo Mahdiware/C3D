@@ -3,18 +3,14 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "engine/core/renderer/renderer.h"
+#include "math.h"
+#include "engine/triangle/Triangle.h"
+#include "engine/vec2/vec2.h"
+
 
 Object *createBasicTriangle() {
-    Object *obj = initialize_object();
-
-    Vertex* top = initialize_vertex( 0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f);
-    Vertex* bottom_right = initialize_vertex( -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f);
-    Vertex* bottom_left = initialize_vertex( 0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f);
-
-    add_vertex(obj, top);
-    add_vertex(obj, bottom_right);
-    add_vertex(obj, bottom_left);
-    return obj;
+    Triangle triangle = init_triangle((vec2){0.0f, 0.5f}, (vec2){-0.5f, -0.5f}, (vec2){0.5f, -0.5f});
+    return get_triangle_object(triangle);
 }
 
 int main(void) {

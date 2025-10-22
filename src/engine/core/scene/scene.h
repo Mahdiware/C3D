@@ -9,7 +9,7 @@
 
 typedef  struct {
     int totalObjects;
-    Object *objects;
+    Object **objects;
 }Scene;
 
 Scene *initialize_scene();

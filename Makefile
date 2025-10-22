@@ -9,6 +9,8 @@ SRC = src/main.c\
 	  src/engine/core/scene/scene.c \
 	  src/engine/object/object.c \
       src/engine/vertex/vertex.c \
+      src/engine/triangle/Triangle.c \
+      src/engine/helper/helper.c \
 
 
 

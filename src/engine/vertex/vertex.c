@@ -7,13 +7,9 @@
 #include <stdlib.h>
 
 
-Vertex *initialize_vertex(float x, float y, float z, float r, float g, float b) {
+Vertex *initialize_vertex(vec3 position, vec3 color) {
     Vertex *vertex = (Vertex *)malloc(sizeof(Vertex));
-    vertex->x = x;
-    vertex->y = y;
-    vertex->z = z;
-    vertex->r = r;
-    vertex->g = g;
-    vertex->b = b;
+    vertex->position = position;
+    vertex->color = color;
     return vertex;
 }

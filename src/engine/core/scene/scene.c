@@ -19,7 +19,7 @@ void add_object(Scene *scene, Object *object) {
         return;
     }
     // Copy the new Object into the array
-    scene->objects[scene->totalObjects] = *object;
+    scene->objects[scene->totalObjects] = object;
     scene->totalObjects++;
 }
 

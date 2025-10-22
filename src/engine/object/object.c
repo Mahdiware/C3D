@@ -3,14 +3,20 @@
 //
 
 #include "object.h"
+
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+void noUpdate(void *k,double d) {
+    printf("NoUpdate\n");
+}
 Object *initialize_object() {
     Object *object = malloc(sizeof(Object));
     object->total_vertices = 0;
     object->vertices = NULL;
     object->mode = GL_TRIANGLES;
+    object->update = noUpdate;
     return object;
 }
 void add_vertex(Object *object, Vertex *vertex) {
@@ -46,4 +52,8 @@ void remove_vertex(Object *object, Vertex *vertex) {
         free(object->vertices);
         object->vertices = NULL;
     }
+}
+
+void on_update(Object *object, update_function update) {
+    object->update = update;
 }
