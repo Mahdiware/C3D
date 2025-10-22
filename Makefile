@@ -1,0 +1,36 @@
+CC = gcc
+CFLAGS = -Wall -std=c11 -Ilibs/glad/include -Isrc
+LIBS = -lglfw -ldl -lm
+
+SRC = src/main.c\
+	  libs/glad/src/glad.c\
+	  src/engine/core/renderer/renderer.c \
+	  src/engine/core/shader/shader.c \
+	  src/engine/core/scene/scene.c \
+	  src/engine/object/object.c \
+      src/engine/vertex/vertex.c \
+
+
+
+OBJ = $(patsubst %.c,build/%.o,$(SRC))
+TARGET = opengl_gui
+
+# Ensure build directories exist
+BUILD_DIRS = $(sort $(dir $(OBJ)))
+
+all: $(TARGET)
+
+# Create build directories if they don't exist
+$(BUILD_DIRS):
+	mkdir -p $@
+
+# Link target
+$(TARGET): $(OBJ)
+	$(CC) $(CFLAGS) -o build/$@ $^ $(LIBS)
+
+# Compile .c -> .o
+build/%.o: %.c | $(BUILD_DIRS)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+clean:
+	rm -rf build/*
