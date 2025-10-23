@@ -20,5 +20,6 @@ void add_object(Mesh *scene, Object *object);
 void add_objects(Mesh *scene, Object **objects, int num_objects);
 void remove_object(Mesh *scene, Object *object);
 void on_update_mesh(Mesh *mesh, update_function function);
+Mesh *load_from_file(char *filename);
 
 #endif //C_3D_RENDERING_ENGINE_MESH_H

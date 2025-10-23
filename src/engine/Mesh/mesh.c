@@ -3,8 +3,12 @@
 //
 #include "mesh.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "engine/helper/helper.h"
+#include "engine/triangle/Triangle.h"
 
 void mesh_update(void *mesh_o, double time) {
     Mesh *mesh = (Mesh *)mesh_o;
@@ -70,4 +74,46 @@ void remove_object(Mesh *mesh, Object *object) {
 
 void on_update_mesh(Mesh *mesh ,update_function function) {
     mesh->customUpdate = function;
+}
+Mesh *load_from_file(char *filename) {
+    FILE *f = fopen(filename, "r");
+    if (!f) {
+        perror("Failed to open file");
+        return 0;
+    }
+    Mesh *mesh = initialize_mesh();
+    int total_vertices = 0;
+    vec3 *vertices = (vec3 *)malloc(sizeof(vec3) * 1);
+    Color color = getColor();
+
+    char line[128];
+    while (fgets(line, sizeof(line), f)) {
+        if (line[0] == '\0' || line[0] == '\n')
+            continue;
+
+        if (line[0] == 'v') {
+            if (line[0] == 'v') {
+                float x, y, z;
+                if (sscanf(line, "v %f %f %f", &x, &y, &z) == 3) {
+                    vec3 *tmp = realloc(vertices, sizeof(vec3) * (total_vertices + 1));
+                    if (!tmp) { free(vertices); return NULL; }
+                    vertices = tmp;
+                    vertices[total_vertices++] = Vec3(x, y, z);
+                }
+            }
+        }
+
+        if (line[0] == 'f') {
+            int f0, f1, f2;
+            if (sscanf(line, "f %d %d %d", &f0, &f1, &f2) == 3) {
+                if (f0-1 < total_vertices && f1-1 < total_vertices && f2-1 < total_vertices) {
+                    Triangle tri = init_triangle_3(vertices[f0-1], vertices[f1-1], vertices[f2-1]);
+                    add_object(mesh, get_triangle_object_filled(tri, (vec3[]){color.red}, 1));
+                }
+            }
+        }
+    }
+
+    fclose(f);
+    return mesh; // true
 }
