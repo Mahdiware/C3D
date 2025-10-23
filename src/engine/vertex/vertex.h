@@ -11,6 +11,11 @@ typedef struct {
     vec3 color;
 }Vertex;
 
+typedef struct {
+    Vertex *vertex;
+    int rendered;
+} VertexArray;
+
 Vertex *initialize_vertex(vec3 position, vec3 color);
 
 #endif //C_3D_RENDERING_ENGINE_VERTEX_H

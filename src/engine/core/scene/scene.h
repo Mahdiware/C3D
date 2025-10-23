@@ -5,7 +5,6 @@
 #ifndef C_3D_RENDERING_ENGINE_SCENE_H
 #define C_3D_RENDERING_ENGINE_SCENE_H
 #include "engine/Mesh/mesh.h"
-#include "engine/object/object.h"
 
 
 typedef  struct {

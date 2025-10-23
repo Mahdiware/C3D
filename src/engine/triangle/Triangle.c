@@ -4,9 +4,10 @@
 
 #include "Triangle.h"
 
-#include "engine/helper/helper.h"
-#include "engine/Line/line.h"
+#include <stdio.h>
 #include "math.h"
+#include "engine/helper/helper.h"
+
 void rotateTriangle(void *object_ptr, double time) {
 
     Object *object = (Object *)object_ptr;
@@ -62,36 +63,15 @@ Object *get_triangle_object_filled(Triangle t, vec3 *c, int colors) {
     add_vertex(triangle, bottom_left);
     return triangle;
 }
-Mesh *get_triangle_object_line(Triangle t, vec3 *c, int colors) {
-    Mesh *triangle = initialize_mesh();
-    vec3 mainColor = getColor().red;
-
-    if (colors > 0) {
-        mainColor = c[0];
+Triangle from_vertices(Vertex *verticies, int num_vertices) {
+    Triangle triangle = init_triangle_3(Vec3(0, 0, 0), Vec3(0, 0, 0), Vec3(0, 0, 0));
+    if (num_vertices != 3) {
+        printf("Error: The verticies isnt a triangle ");
     }
-
-    vec3 c1 = mainColor;
-    vec3 c2= mainColor;
-    vec3 c3= mainColor;
-
-    if (colors >= 2) {
-        c2 = c[1];
-    }
-
-    if (colors == 3) {
-        c3 = c[2];
-    }
-
-    Line *ta = init_line(((t.b)), (t.a));
-    Line *tb = init_line((t.b), (t.c));
-    Line *tc = init_line((t.a), (t.c));
-
-    add_object(triangle, getLineObject(ta));
-    add_object(triangle, getLineObject(tb));
-    add_object(triangle, getLineObject(tc));
-
+    triangle.a = verticies[0].position;
+    triangle.b = verticies[1].position;
+    triangle.c = verticies[2].position;
     return triangle;
-
 }
 
 Triangle init_triangle(vec2 a, vec2 b, vec2 c) {
@@ -107,4 +87,27 @@ Triangle init_triangle_3(vec3 a, vec3 b, vec3 c) {
     t.b = (b);
     t.c = (c);
     return t;
+}
+vec3 getNormalVector(Triangle t) {
+    vec3 line1 = {0, 0, 0};
+    line1.x = t.b.x - t.a.x;
+    line1.y = t.b.y - t.a.y;
+    line1.z = t.b.z - t.a.z;
+
+    vec3 line2 = {0, 0, 0};
+    line2.x = t.c.x - t.a.x;
+    line2.y = t.c.y - t.a.y;
+    line2.z = t.c.z - t.a.z;
+
+    vec3 normalized = {0, 0, 0};
+    normalized.x = line1.y * line2.z - line1.z * line2.y;
+    normalized.y = line1.z * line2.x - line1.x * line2.z;
+    normalized.z = line1.x * line2.y - line1.y * line2.x;
+
+    float l = sqrtf(normalized.x * normalized.x + normalized.y * normalized.y + normalized.z * normalized.z);
+    normalized.x /= l;
+    normalized.y /= l;
+    normalized.z /= l;
+
+    return normalized;
 }

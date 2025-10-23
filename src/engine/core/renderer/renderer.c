@@ -10,6 +10,8 @@
 #include "engine/helper/helper.h"
 #include "engine/object/object.h"
 
+#include "glad/glad.h"
+
 static void error_callback(int error, const char* description) {
     fprintf(stderr, "GLFW Error (%d): %s\n", error, description);
 }
@@ -141,12 +143,13 @@ void renderer_polling(Renderer *r) {
             for (int i = 0; i < curMesh->num_objects; i ++) {
                 Object *obj = curMesh->objects[curMesh->num_objects - 1 - i];
                 matrix4x4 projectionMatrix = get_projection_matrix(r->height, r->width, 90.0f, 1000.0f, 0.1f);
-                Vertex *new_vertex = get_vertex_screen(obj, projectionMatrix, r->height, r->width);
-
-                glBufferSubData(GL_ARRAY_BUFFER, 0, obj->total_vertices * sizeof(Vertex), new_vertex);
-                glDrawArrays(obj->mode, 0, obj->total_vertices);
-
-                free(new_vertex);
+                VertexArray new_vertex = get_vertex_screen(obj, projectionMatrix, r->height, r->width);
+                if (new_vertex.rendered) {
+                    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+                    glBufferSubData(GL_ARRAY_BUFFER, 0, obj->total_vertices * sizeof(Vertex), new_vertex.vertex);
+                    glDrawArrays(GL_TRIANGLES, 0, obj->total_vertices);
+                }
+                free(new_vertex.vertex);
             }
 
         }

@@ -2,17 +2,17 @@ CC = gcc
 CFLAGS = -Wall -std=c11 -Ilibs/glad/include -Isrc
 LIBS = -lglfw -ldl -lm
 
-SRC = src/main.c\
-	  libs/glad/src/glad.c\
+SRC = src/main.c \
+	  libs/glad/src/glad.c \
 	  src/engine/core/renderer/renderer.c \
 	  src/engine/core/shader/shader.c \
 	  src/engine/core/scene/scene.c \
 	  src/engine/object/object.c \
       src/engine/vertex/vertex.c \
       src/engine/triangle/Triangle.c \
-      src/engine/Line/line.c \
       src/engine/helper/helper.c \
       src/engine/Mesh/mesh.c \
+      src/engine/Rect/Rect.c
 
 
 

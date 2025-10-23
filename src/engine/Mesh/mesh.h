@@ -4,9 +4,8 @@
 
 #ifndef C_3D_RENDERING_ENGINE_MESH_H
 #define C_3D_RENDERING_ENGINE_MESH_H
-
-
 #include "engine/object/object.h"
+
 
 typedef struct {
     Object **objects;
