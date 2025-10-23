@@ -18,6 +18,7 @@ typedef struct {
     Scene *currentScene;
 
     double currentTime;
+    double deltaTime;
 
     int width, height;
 } Renderer;

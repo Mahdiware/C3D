@@ -5,7 +5,7 @@
 #include "Triangle.h"
 
 #include "engine/helper/helper.h"
-
+#include "engine/Line/line.h"
 #include "math.h"
 void rotateTriangle(void *object_ptr, double time) {
 
@@ -30,26 +30,81 @@ void rotateTriangle(void *object_ptr, double time) {
 
 }
 
-Object *get_triangle_object(Triangle t) {
+Object *get_triangle_object_filled(Triangle t, vec3 *c, int colors) {
     Object *triangle = initialize_object();
 
-    on_update(triangle, rotateTriangle);
+    // on_update(triangle, rotateTriangle);
+    // triangle->mode = GL_LINES;
 
-    Vertex* top = initialize_vertex(vec2ToVec3(t.a), getColor().red);
-    Vertex* bottom_right = initialize_vertex(vec2ToVec3(t.b), getColor().green);
-    Vertex* bottom_left = initialize_vertex(vec2ToVec3(t.c), getColor().blue);
+    vec3 mainColor = getColor().red;
+
+    if (colors > 0) {
+        mainColor = c[0];
+    }
+
+    vec3 c1 = mainColor;
+    vec3 c2= mainColor;
+    vec3 c3= mainColor;
+
+    if (colors >= 2) {
+        c2 = c[1];
+    }
+
+    if (colors == 3) {
+        c3 = c[2];
+    }
+    Vertex* top = initialize_vertex((t.a), c1);
+    Vertex* bottom_right = initialize_vertex((t.b), c2);
+    Vertex* bottom_left = initialize_vertex((t.c), c3);
 
     add_vertex(triangle, top);
     add_vertex(triangle, bottom_right);
     add_vertex(triangle, bottom_left);
+    return triangle;
+}
+Mesh *get_triangle_object_line(Triangle t, vec3 *c, int colors) {
+    Mesh *triangle = initialize_mesh();
+    vec3 mainColor = getColor().red;
+
+    if (colors > 0) {
+        mainColor = c[0];
+    }
+
+    vec3 c1 = mainColor;
+    vec3 c2= mainColor;
+    vec3 c3= mainColor;
+
+    if (colors >= 2) {
+        c2 = c[1];
+    }
+
+    if (colors == 3) {
+        c3 = c[2];
+    }
+
+    Line *ta = init_line(((t.b)), (t.a));
+    Line *tb = init_line((t.b), (t.c));
+    Line *tc = init_line((t.a), (t.c));
+
+    add_object(triangle, getLineObject(ta));
+    add_object(triangle, getLineObject(tb));
+    add_object(triangle, getLineObject(tc));
+
     return triangle;
 
 }
 
 Triangle init_triangle(vec2 a, vec2 b, vec2 c) {
     Triangle t;
-    t.a = a;
-    t.b = b;
-    t.c = c;
+    t.a = vec2ToVec3(a);
+    t.b = vec2ToVec3(b);
+    t.c = vec2ToVec3(c);
+    return t;
+}
+Triangle init_triangle_3(vec3 a, vec3 b, vec3 c) {
+    Triangle t;
+    t.a = (a);
+    t.b = (b);
+    t.c = (c);
     return t;
 }

@@ -8,6 +8,8 @@
 
 #include <GLFW/glfw3.h>
 
+#include "engine/matrix4x4/matrix4x4.h"
+
 typedef void (*update_function)(void *, double);
 
 typedef struct {
@@ -22,5 +24,6 @@ Object *initialize_object();
 void add_vertex(Object *object, Vertex *vertex);
 void remove_vertex(Object *object, Vertex *vertex);
 void on_update(Object *obj, update_function update);
+Vertex *get_vertex_screen(Object *obj, matrix4x4 projection, int height, int width);
 
 #endif //C_3D_RENDERING_ENGINE_OBJECT_H

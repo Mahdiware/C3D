@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <math.h>
 
+#include "engine/helper/helper.h"
 #include "engine/object/object.h"
 
 static void error_callback(int error, const char* description) {
@@ -97,12 +98,21 @@ Renderer *init_renderer(int height, int width, char *title) {
     glGenBuffers(1, &r->VBO);
     glBindVertexArray(r->VAO);
     glBindBuffer(GL_ARRAY_BUFFER, r->VBO);
-    glBufferData(GL_ARRAY_BUFFER, 4096 * sizeof(Vertex), 0, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 10240 * sizeof(Vertex), 0, GL_DYNAMIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(3 * sizeof(float)));
     glBindVertexArray(0);
+
+    /*
+     * GET WINDOW SIZE
+     */
+    int width_win, height_win;
+    glfwGetWindowSize(r->window, &width_win, &height_win);
+    r->width = width_win;
+    r->height = height_win;
+
     r->initialized = 1;
     return  r;
 }
@@ -117,16 +127,28 @@ void renderer_polling(Renderer *r) {
         glClearColor(0.1f,0.12f,0.15f,1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        r->currentTime = glfwGetTime();
+        double time = glfwGetTime();
+        double deltaTime = time - r->currentTime;
+        r->currentTime = time;
+        r->deltaTime = deltaTime;
         glUseProgram(r->shaderProgram);
         glBindVertexArray(r->VAO);
-        glBindBuffer(GL_ARRAY_BUFFER, r->VAO);
+        glBindBuffer(GL_ARRAY_BUFFER, r->VBO);
 
         for (int i = 0; i < r->currentScene->totalObjects; i++) {
-            Object *obj = r->currentScene->objects[i];
-            obj->update(obj, r->currentTime);
-            glBufferSubData(GL_ARRAY_BUFFER, 0, obj->total_vertices * sizeof(Vertex), obj->vertices);
-            glDrawArrays(obj->mode, 0, obj->total_vertices);
+            Mesh *curMesh =  r->currentScene->objects[i];
+            curMesh->update(curMesh, r->deltaTime);;
+            for (int i = 0; i < curMesh->num_objects; i ++) {
+                Object *obj = curMesh->objects[curMesh->num_objects - 1 - i];
+                matrix4x4 projectionMatrix = get_projection_matrix(r->height, r->width, 90.0f, 1000.0f, 0.1f);
+                Vertex *new_vertex = get_vertex_screen(obj, projectionMatrix, r->height, r->width);
+
+                glBufferSubData(GL_ARRAY_BUFFER, 0, obj->total_vertices * sizeof(Vertex), new_vertex);
+                glDrawArrays(obj->mode, 0, obj->total_vertices);
+
+                free(new_vertex);
+            }
+
         }
 
         glfwSwapBuffers(r->window);

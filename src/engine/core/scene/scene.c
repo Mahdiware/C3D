@@ -12,23 +12,23 @@ Scene *initialize_scene() {
     scene->objects = NULL;
     return scene;
 }
-void add_object(Scene *scene, Object *object) {
+void add_mesh(Scene *scene, Mesh *mesh){
     scene->objects = realloc(scene->objects, sizeof(Object) * (scene->totalObjects + 1));
     if (!scene->objects) {
         scene->totalObjects = 0;
         return;
     }
     // Copy the new Object into the array
-    scene->objects[scene->totalObjects] = object;
+    scene->objects[scene->totalObjects] = mesh;
     scene->totalObjects++;
 }
 
-void remove_object(Scene *scene, Object *object) {
-    if (!object ||scene->totalObjects == 0) return;
+void remove_mesh(Scene *scene, Mesh *mesh) {
+    if (!mesh ||scene->totalObjects == 0) return;
 
     int found_index = -1;
     for (int i = 0; i <scene->totalObjects; i++) {
-        if (memcmp(&scene->objects[i], object, sizeof(Object)) == 0) {
+        if (memcmp(&scene->objects[i], mesh, sizeof(Object)) == 0) {
             found_index = i;
             break;
         }
@@ -39,7 +39,7 @@ void remove_object(Scene *scene, Object *object) {
     }
 
    scene->totalObjects--;
-    if (object->total_vertices > 0) {
+    if (mesh->num_objects > 0) {
         scene->objects = realloc(scene->objects, sizeof(Object) *scene->totalObjects);
     } else {
         free(scene->objects);

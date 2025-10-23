@@ -3,13 +3,13 @@
 //
 
 #include "object.h"
-
+#include "engine/helper/helper.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 void noUpdate(void *k,double d) {
-    printf("NoUpdate\n");
+    // printf("NoUpdate\n");
 }
 Object *initialize_object() {
     Object *object = malloc(sizeof(Object));
@@ -56,4 +56,32 @@ void remove_vertex(Object *object, Vertex *vertex) {
 
 void on_update(Object *object, update_function update) {
     object->update = update;
+}
+
+int printed = 3;
+Vertex *get_vertex_screen(Object *obj, matrix4x4 projection, int height, int width) {
+    Vertex *new_vertices = malloc(sizeof(Vertex) * obj->total_vertices);
+    for (int i = 0; i < obj->total_vertices; i++) {
+        Vertex *vertex = &obj->vertices[i];
+        new_vertices[i] = *vertex;
+        new_vertices[i].position.z += 3.0f;
+        vec3d current_pos = multiplyMatrix4x4AndVec3(new_vertices[i].position, projection);
+        // current_pos.x += 1.0f;
+        // current_pos.y += 1.0f;
+        //
+        // current_pos.x *= (0.5f * (float)width);
+        // current_pos.y *= (0.5f * (float)height);
+        // vec2 new_scr = screen_to_ndc(current_pos.x, current_pos.y, width, height);
+        // current_pos.x = new_scr.x;
+        // current_pos.y = new_scr.y;
+
+        if (printed) {
+            printf("Original vertex %d: {%.2f, %.2f, %.2f}\n", i, vertex->position.x, vertex->position.y, vertex->position.z);
+
+            printf("new vertext %d{%.2f, %.2f, %.2f}\n", i, current_pos.x, current_pos.y, current_pos.z);
+            printed--;
+        }
+        new_vertices[i].position = (vec3){current_pos.x, current_pos.y, current_pos.z};
+    }
+    return new_vertices;
 }

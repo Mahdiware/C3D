@@ -10,7 +10,9 @@ SRC = src/main.c\
 	  src/engine/object/object.c \
       src/engine/vertex/vertex.c \
       src/engine/triangle/Triangle.c \
+      src/engine/Line/line.c \
       src/engine/helper/helper.c \
+      src/engine/Mesh/mesh.c \
 
 
 
