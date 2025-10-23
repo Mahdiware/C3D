@@ -197,5 +197,6 @@ int main(void) {
     renderer_polling(renderer);
     destroy_renderer(renderer);
     free(scene);
+
     return 0;
 }

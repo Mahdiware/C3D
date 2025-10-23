@@ -128,6 +128,9 @@ void renderer_polling(Renderer *r) {
 
         glClearColor(0.1f,0.12f,0.15f,1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         double time = glfwGetTime();
         double deltaTime = time - r->currentTime;
