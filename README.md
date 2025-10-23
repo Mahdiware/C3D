@@ -15,7 +15,8 @@ Done:
 [ vec3 ] -> {x, y, z}
 [ Vertex ] -> { vec3 position, vec3 color }
 [ Object ] -> { Vecrtex[] , type }
-[ Scene ] -> { Object[] }
+[ Mesh ] -> { Object[] }
+[ Scene ] -> { Mesh[] }
 
 renderer(Scene) -> OpenGL rendering
 object.update(object, time)
