@@ -144,7 +144,7 @@ void renderer_polling(Renderer *r) {
             Mesh *curMesh =  r->currentScene->objects[i];
             curMesh->update(curMesh, r->deltaTime);;
             for (int i = 0; i < curMesh->num_objects; i ++) {
-                Object *obj = curMesh->objects[curMesh->num_objects - 1 - i];
+                Object *obj = curMesh->objects[i];
                 matrix4x4 projectionMatrix = get_projection_matrix(r->height, r->width, 90.0f, 1000.0f, 0.1f);
                 VertexArray new_vertex = get_vertex_screen(obj, projectionMatrix, r->height, r->width);
                 if (new_vertex.rendered) {

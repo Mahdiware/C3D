@@ -147,3 +147,43 @@ vec3 fromVec3d(vec3d v) {
 vec3 Vec3(float x, float y, float z) {
     return (vec3){x, y, z};
 }
+
+
+vec3 vec3_add(vec3 p1, vec3 p2) {
+    return Vec3(p1.x + p2.x, p1.y + p2.y, p1.z + p2.z);
+}
+vec3 vec3_sub(vec3 p1, vec3 p2) {
+    vec3 vec = {0, 0, 0};
+    vec.x = p1.x - p2.x;
+    vec.y = p1.y - p2.y;
+    vec.z = p1.z - p2.z;
+    return vec;
+}
+vec3 vec3_mul(vec3 p1, float k) {
+    return Vec3(p1.x * k, p1.y * k, p1.z * k);
+}
+vec3 vec3_div(vec3 p1, float k) {
+    if (k == 0) {
+        return Vec3(0.0f, 0.0f, 0.0f);
+    }
+    return Vec3(p1.x / k, p1.y / k, p1.z / k);
+}
+float vec3_dot(vec3 p1, vec3 p2) {
+    return p1.x * p2.x + p1.y * p2.y + p1.z * p2.z;
+}
+float vec3_len(vec3 p1) {
+    return sqrtf(vec3_dot(p1, p1));
+}
+vec3 vec3_normalize(vec3 p1) {
+    float len = vec3_len(p1);
+    return vec3_div(p1, len);
+}
+
+
+vec3 vec3_cross(vec3 p1, vec3 p2) {
+    vec3 cross = {0, 0, 0};
+    cross.x = p1.y * p2.z - p1.z * p2.y;
+    cross.y = p1.z * p2.x - p1.x * p2.z;
+    cross.z = p1.x * p2.y - p1.y * p2.x;
+    return cross;
+}

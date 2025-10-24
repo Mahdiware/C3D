@@ -89,25 +89,12 @@ Triangle init_triangle_3(vec3 a, vec3 b, vec3 c) {
     return t;
 }
 vec3 getNormalVector(Triangle t) {
-    vec3 line1 = {0, 0, 0};
-    line1.x = t.b.x - t.a.x;
-    line1.y = t.b.y - t.a.y;
-    line1.z = t.b.z - t.a.z;
+    vec3 line1 = vec3_sub(t.b, t.a);
 
-    vec3 line2 = {0, 0, 0};
-    line2.x = t.c.x - t.a.x;
-    line2.y = t.c.y - t.a.y;
-    line2.z = t.c.z - t.a.z;
-
-    vec3 normalized = {0, 0, 0};
-    normalized.x = line1.y * line2.z - line1.z * line2.y;
-    normalized.y = line1.z * line2.x - line1.x * line2.z;
-    normalized.z = line1.x * line2.y - line1.y * line2.x;
-
-    float l = sqrtf(normalized.x * normalized.x + normalized.y * normalized.y + normalized.z * normalized.z);
-    normalized.x /= l;
-    normalized.y /= l;
-    normalized.z /= l;
+    vec3 line2 = vec3_sub(t.c, t.a);
+    vec3 cross = vec3_cross(line1, line2);
+    float l = vec3_len(cross);
+    vec3 normalized = vec3_div(cross, l);
 
     return normalized;
 }

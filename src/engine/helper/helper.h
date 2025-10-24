@@ -18,6 +18,15 @@ vec3 reverse_vec3(vec3 vector3);
 vec2 screen_to_ndc(float x, float y, float width, float height);
 vec3 color_with_luminance(vec3 base_color, float lum);
 void apply_luminance(Object *obj, float lum);
+
+vec3 vec3_add(vec3 p1, vec3 p2);
+vec3 vec3_sub(vec3 p1, vec3 p2);
+vec3 vec3_mul(vec3 p1, float k);
+vec3 vec3_div(vec3 p1, float k);
+float vec3_dot(vec3 p1, vec3 p2);
+float vec3_len(vec3 p1);
+vec3 vec3_normalize(vec3 p1);
+vec3 vec3_cross(vec3 p1, vec3 p2);
 typedef struct {
     vec3 red;
     vec3 green;

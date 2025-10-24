@@ -187,13 +187,25 @@ Mesh* get_Ship() {
     on_update_mesh(ship, rotateCube3d);
     return  ship;
 }
+
+Mesh* getTeapot() {
+    Mesh *ship = load_from_file("/home/arjun/c_3d_rendering_engine/teapot.obj");
+    on_update_mesh(ship, rotateCube3d);
+    return  ship;
+}
+
+Mesh* getAxis() {
+    Mesh *ship = load_from_file("/home/arjun/c_3d_rendering_engine/axis.obj");
+    on_update_mesh(ship, rotateCube3d);
+    return  ship;
+}
 int main(void) {
     Scene *scene =(Scene *) malloc(sizeof(Scene));
     //
     Renderer *renderer = init_renderer(800, 800, "C 3d Rendering Engine");
     renderer->currentScene = scene;
     add_mesh(scene, get_Ship());
-    add_mesh(scene, get3dCube());
+    add_mesh(scene, getTeapot());
     renderer_polling(renderer);
     destroy_renderer(renderer);
     free(scene);
