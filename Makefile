@@ -43,3 +43,7 @@ run: all
 
 clean:
 	rm -rf build/*
+
+build_shader:
+	 xxd -i assets/shaders/vertex_shader.glsl > src/engine/core/shader/vertex_shader.h
+	 xxd -i assets/shaders/fragment_shader.glsl > src/engine/core/shader/fragment_shader.h

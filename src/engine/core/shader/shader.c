@@ -3,21 +3,18 @@
 //
 
 #include "shader.h"
+
+#include <stdlib.h>
+#include <string.h>
+
 #include "stdio.h"
+#include "vertex_shader.h"
+#include "fragment_shader.h"
 GLuint create_shader_program() {
-    const char* vertex_src = "#version 330 core\n"
-        "layout(location=0) in vec3 aPos;\n"
-        "layout(location=1) in vec3 aColor;\n"
-        "out vec3 vColor;\n"
-        "void main(){ vColor = aColor; gl_Position = vec4(aPos,1.0); }";
 
-    const char* fragment_src = "#version 330 core\n"
-        "in vec3 vColor;\n"
-        "out vec4 FragColor;\n"
-        "void main(){ FragColor = vec4(vColor,1.0); }";
 
-    GLuint vs = compile_shader(GL_VERTEX_SHADER, vertex_src);
-    GLuint fs = compile_shader(GL_FRAGMENT_SHADER, fragment_src);
+    GLuint vs = compile_shader(GL_VERTEX_SHADER, (const char*)&assets_shaders_vertex_shader_glsl);
+    GLuint fs = compile_shader(GL_FRAGMENT_SHADER, (const char*)&assets_shaders_fragment_shader_glsl);
 
     GLuint program = glCreateProgram();
     glAttachShader(program, vs);
