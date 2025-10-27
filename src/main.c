@@ -174,7 +174,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 }
 
 Mesh* get_Ship() {
-    Mesh *ship = load_from_file("VideoShip.obj");
+    Mesh *ship = load_from_file("../VideoShip.obj");
     if (!ship) {
         perror("Failed to load Mesh from file");
         exit(-1);
@@ -184,7 +184,7 @@ Mesh* get_Ship() {
 }
 
 Mesh* getTeapot() {
-    Mesh *ship = load_from_file("teapot.obj");
+    Mesh *ship = load_from_file("../teapot.obj");
     if (!ship) {
         perror("Failed to load Mesh from file");
         exit(-1);
@@ -194,7 +194,7 @@ Mesh* getTeapot() {
 }
 
 Mesh* getAxis() {
-    Mesh *ship = load_from_file("axis.obj");
+    Mesh *ship = load_from_file("../axis.obj");
     if (!ship) {
         perror("Failed to load Mesh from file");
         exit(-1);
