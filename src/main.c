@@ -13,6 +13,17 @@
 #include "engine/vec3/vec3.h"
 #include "engine/object/object.h"
 
+Renderer *renderer;
+double lastX = 0, lastY = 0;
+float yaw = 0.0f, pitch = 0.0f;
+int firstMouse = 1;
+float sensitivity = 0.03f;
+int mouseMoved = 0;
+float rotationSpeed = 1.0f;
+
+int invertYaw = 1;
+int invertPitch = 1;
+
 // Mesh *createBasicTriangle() {
 //     Triangle triangle = init_triangle((vec2){1.0f, 2.0f}, (vec2){0.0f, 0.0f}, (vec2){2.0f, 0.0f});
 //     Mesh *mesh = initialize_mesh();
@@ -34,60 +45,41 @@
 //     Line *line = init_line((vec3){0.0f, 0.0f, 1.0f}, (vec3){10.0f, 10.0f, 1.0f});
 //     return get_line_mesh(line);
 // }
+
 typedef struct {
     vec3d *base_positions;
     int count;
 } MeshRotationData;
 
-float rotationSpeed = 1.0f;
-
-matrix4x4 rotZ(double angle) {
-    matrix4x4 m = {0};
-    m.a[0][0] = cos(angle);
-    m.a[0][1] = sin(angle);
-    m.a[1][0] = -sin(angle);
-    m.a[1][1] = cos(angle);
-    m.a[2][2] = 1;
-    m.a[3][3] = 1;
-    return m;
-}
-
-matrix4x4 rotX(double angle) {
-    matrix4x4 m = {0};
-    m.a[0][0] = 1;
-    m.a[1][1] = cos(angle);
-    m.a[1][2] = -sin(angle);
-    m.a[2][1] = sin(angle);
-    m.a[2][2] = cos(angle);
-    m.a[3][3] = 1;
-    return m;
-}
-
 void rotateCube3d(void *mesh_p, double time) {
     Mesh *mesh = (Mesh *)mesh_p;
+    if (!mesh) return;
 
-    double angle = rotationSpeed * time;
-    matrix4x4 rotZMat = rotZ(angle);
-    matrix4x4 rotXMat = rotX(angle * 0.5);
+    double autoAngle = 0.0;
 
-    vec3 center = {0.5f, 0.5f, 0.5f}; // cube center (since coordinates are 0–1)
+    matrix4x4 rotZMat = rotZ(autoAngle);
+    matrix4x4 rotXMat = rotX(autoAngle * 0.5);
+
+    // Mouse rotation still applied if mouse moved
+    matrix4x4 mouseYRot = rotY(mouseMoved ? yaw * (M_PI / 180.0) : 0);
+    matrix4x4 mouseXRot = rotX(mouseMoved ? pitch * (M_PI / 180.0) : 0);
+
+    matrix4x4 combined = multiplyMatrix4x4(mouseYRot, mouseXRot);
+    combined = multiplyMatrix4x4(combined, rotZMat);
+    combined = multiplyMatrix4x4(combined, rotXMat);
+
+    vec3 center = {0.5f, 0.5f, 0.5f};
 
     for (int i = 0; i < mesh->num_objects; i++) {
         Object *obj = mesh->objects[i];
-
         for (int j = 0; j < obj->total_vertices; j++) {
             vec3 pos = obj->vertices[j].position;
-
-            // Translate to center
             pos.x -= center.x;
             pos.y -= center.y;
             pos.z -= center.z;
 
-            // Rotate
-            vec3d temp = multiplyMatrix4x4AndVec3(pos, rotZMat);
-            vec3d rotated = multiplyMatrix4x4AndVec3(fromVec3d(temp), rotXMat);
+            vec3d rotated = multiplyMatrix4x4AndVec3(pos, combined);
 
-            // Translate back
             obj->vertices[j].position.x = rotated.x + center.x;
             obj->vertices[j].position.y = rotated.y + center.y;
             obj->vertices[j].position.z = rotated.z + center.z;
@@ -95,44 +87,6 @@ void rotateCube3d(void *mesh_p, double time) {
     }
 }
 
-
-//
-// void rotateCube3d(void *mesh_p, double time) {
-//     Mesh *mesh = (Mesh *)mesh_p;
-//     double angleZ = time * rotationSpeed;
-//     double angleX = time * rotationSpeed * 0.7; // a bit different for depth feel
-//
-//     // rotation matrices
-//     matrix4x4 rotZ = roxCubeZ(angleZ);
-//     matrix4x4 rotX = roxCubeX(angleX);
-//
-//     // combine rotations: rotZ * rotX
-//     matrix4x4 rotCombined = multiplyMatrix4x4(rotZ, rotX);
-//
-//     // optional: rotation center offset
-//     vec3 center = {0.5f, 0.5f, 0.5f};
-//
-//     for (int i = 0; i < mesh->num_objects; i++) {
-//         Object *obj = mesh->objects[i];
-//         for (int j = 0; j < obj->total_vertices; j++) {
-//             // shift to origin
-//             vec3 pos = obj->vertices[j].position;
-//             pos.x -= center.x;
-//             pos.y -= center.y;
-//             pos.z -= center.z;
-//
-//             // apply rotation
-//             vec3d rotated = multiplyMatrix4x4AndVec3(pos, rotCombined);
-//
-//             // shift back
-//             rotated.x += center.x;
-//             rotated.y += center.y;
-//             rotated.z += center.z;
-//
-//             obj->vertices[j].position = fromVec3d(rotated);
-//         }
-//     }
-// }
 Mesh *get3dCube() {
     Mesh *cube = initialize_mesh();
 
@@ -182,28 +136,83 @@ Mesh *get3dCube() {
     return cube;
 }
 
+void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+    if (firstMouse) {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = 0;
+        return;
+    }
+
+    mouseMoved = 1;
+
+    double xoffset = xpos - lastX;
+    double yoffset = lastY - ypos;
+
+    lastX = xpos;
+    lastY = ypos;
+
+    if (invertYaw)  xoffset = -xoffset;
+    if (invertPitch) yoffset = -yoffset;
+
+    xoffset *= sensitivity;
+    yoffset *= sensitivity;
+
+    yaw += xoffset;
+    pitch += yoffset;
+
+    if (pitch > 89.0f) pitch = 89.0f;
+    if (pitch < -89.0f) pitch = -89.0f;
+
+    vec3 front;
+    front.x = cos(yaw * M_PI / 180.0) * cos(pitch * M_PI / 180.0);
+    front.y = sin(pitch * M_PI / 180.0);
+    front.z = sin(yaw * M_PI / 180.0) * cos(pitch * M_PI / 180.0);
+
+    normalizeVec3(&front);
+    copyVec3(&renderer->cameraFront, &front);
+}
+
 Mesh* get_Ship() {
-    Mesh *ship = load_from_file("/home/arjun/c_3d_rendering_engine/VideoShip.obj");
+    Mesh *ship = load_from_file("VideoShip.obj");
+    if (!ship) {
+        perror("Failed to load Mesh from file");
+        exit(-1);
+    }
     on_update_mesh(ship, rotateCube3d);
     return  ship;
 }
 
 Mesh* getTeapot() {
-    Mesh *ship = load_from_file("/home/arjun/c_3d_rendering_engine/teapot.obj");
+    Mesh *ship = load_from_file("teapot.obj");
+    if (!ship) {
+        perror("Failed to load Mesh from file");
+        exit(-1);
+    }
     on_update_mesh(ship, rotateCube3d);
     return  ship;
 }
 
 Mesh* getAxis() {
-    Mesh *ship = load_from_file("/home/arjun/c_3d_rendering_engine/axis.obj");
+    Mesh *ship = load_from_file("axis.obj");
+    if (!ship) {
+        perror("Failed to load Mesh from file");
+        exit(-1);
+    }
     on_update_mesh(ship, rotateCube3d);
     return  ship;
 }
+
 int main(void) {
     Scene *scene =(Scene *) malloc(sizeof(Scene));
     //
-    Renderer *renderer = init_renderer(800, 800, "C 3d Rendering Engine");
+    renderer = init_renderer(800, 800, "C 3d Rendering Engine");
     renderer->currentScene = scene;
+
+    glfwSetCursorPosCallback(renderer->window, mouse_callback);
+    glfwSetInputMode(renderer->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+
     add_mesh(scene, get_Ship());
     add_mesh(scene, getTeapot());
     renderer_polling(renderer);

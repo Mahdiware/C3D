@@ -21,6 +21,7 @@ typedef struct {
     double deltaTime;
 
     int width, height;
+    vec3 cameraFront;
 } Renderer;
 
 Renderer *__create_renderer();

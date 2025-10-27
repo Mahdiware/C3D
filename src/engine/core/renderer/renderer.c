@@ -29,6 +29,7 @@ Renderer *__create_renderer() {
     r->shaderProgram = 1;
     r->VAO = -1;
     r->VBO = -1;
+    r->cameraFront = (vec3){0.0f, 0.0f, -1.0f};
     return r;
 }
 
