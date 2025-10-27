@@ -179,7 +179,6 @@ vec3 vec3_normalize(vec3 p1) {
     return vec3_div(p1, len);
 }
 
-
 vec3 vec3_cross(vec3 p1, vec3 p2) {
     vec3 cross = {0, 0, 0};
     cross.x = p1.y * p2.z - p1.z * p2.y;
