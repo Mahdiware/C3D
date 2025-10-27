@@ -174,19 +174,31 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 }
 
 Mesh* get_Ship() {
-    Mesh *ship = load_from_file("/home/mahdiware/Projects/C3D/VideoShip.obj");
+    Mesh *ship = load_from_file("VideoShip.obj");
+    if (!ship) {
+        perror("Failed to load Mesh from file");
+        exit(-1);
+    }
     on_update_mesh(ship, rotateCube3d);
     return  ship;
 }
 
 Mesh* getTeapot() {
-    Mesh *ship = load_from_file("/home/mahdiware/Projects/C3D/teapot.obj");
+    Mesh *ship = load_from_file("teapot.obj");
+    if (!ship) {
+        perror("Failed to load Mesh from file");
+        exit(-1);
+    }
     on_update_mesh(ship, rotateCube3d);
     return  ship;
 }
 
 Mesh* getAxis() {
-    Mesh *ship = load_from_file("/home/mahdiware/Projects/C3D/axis.obj");
+    Mesh *ship = load_from_file("axis.obj");
+    if (!ship) {
+        perror("Failed to load Mesh from file");
+        exit(-1);
+    }
     on_update_mesh(ship, rotateCube3d);
     return  ship;
 }

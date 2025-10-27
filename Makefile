@@ -38,5 +38,8 @@ $(TARGET): $(OBJ)
 build/%.o: %.c | $(BUILD_DIRS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
+run: all
+	./build/$(TARGET)
+
 clean:
 	rm -rf build/*
